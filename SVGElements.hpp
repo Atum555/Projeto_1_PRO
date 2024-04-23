@@ -198,6 +198,9 @@ class UseElement : public SVGElement {
     std::string href_;
 };
 
+class GroupElement : public SVGElement {
+    // TODO Declare GroupELement Class
+};
 
 } // namespace svg
 #endif
