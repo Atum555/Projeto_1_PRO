@@ -65,6 +65,12 @@ void convert(const std::string &svg_file, const std::string &png_file);
 
 class Ellipse : public SVGElement {
   public:
+    /// @brief          Elipse Element
+    /// @param id       Element's ID
+    /// @param t        Transformation
+    /// @param fill     Fill Color
+    /// @param center   Ellipse Center
+    /// @param radius   Point representing the x and y radius
     Ellipse(const std::string &id, const Transform &t, const Color &fill, const Point &center, const Point &radius);
 
     // TODO Ellipse Draw
@@ -78,6 +84,12 @@ class Ellipse : public SVGElement {
 
 class Circle : public Ellipse {
   public:
+    /// @brief          Circle Element
+    /// @param id       Element's ID
+    /// @param t        Transformation
+    /// @param fill     Fill Color
+    /// @param center   Circle Center
+    /// @param radius   Circle Radius
     Circle(const std::string &id, const Transform &t, const Color &fill, const Point &center, int radius);
 
     // TODO Circle Draw
@@ -170,10 +182,16 @@ class Rectangle : public PolyGon {
 
 class UseElement : public SVGElement {
   public:
+    /// @brief          Object that represents a reference to another element
+    /// @param id       Element's ID
+    /// @param t        Transformation
+    /// @param href     Reference to third Element
     UseElement(const std::string &id, const Transform &t, const std::string &href);
 
+    /// @return Reference to third Element
     const std::string &get_href() const;
 
+    // TODO Use Draw
     void draw(PNGImage &img) const override;
 
   private:
