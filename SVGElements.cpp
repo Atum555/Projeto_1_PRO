@@ -51,4 +51,33 @@ Rectangle::Rectangle(
 
 //
 
+
+//* Use
+
+UseElement::UseElement(const std::string &id, const Transform &t, const std::string &href)
+    : SVGElement(id, t), href_(href) {}
+
+const std::string &UseElement::get_href() const { return href_; }
+
+//
+
+
+//* Draw
+
+void Ellipse::draw(PNGImage &img) const {}
+
+void Circle::draw(PNGImage &img) const {}
+
+void Poly::draw(PNGImage &img) const {}
+
+void PolyLine::draw(PNGImage &img) const {}
+
+void Line::draw(PNGImage &img) const {}
+
+void PolyGon::draw(PNGImage &img) const {}
+
+void Rectangle::draw(PNGImage &img) const {}
+
+void UseElement::draw(PNGImage &img) const {}
+
 } // namespace svg

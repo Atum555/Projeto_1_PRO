@@ -9,9 +9,6 @@
 
 namespace svg {
 
-void readSVG(const std::string &svg_file, Point &dimensions, std::vector<SVGElement *> &svg_elements);
-void convert(const std::string &svg_file, const std::string &png_file);
-
 class Transform {
   private:
     int transX_, transY_;
@@ -62,6 +59,9 @@ class SVGElement {
     virtual ~SVGElement();
     virtual void draw(PNGImage &img) const = 0;
 };
+
+void readSVG(const std::string &svg_file, Point &dimensions, std::vector<SVGElement *> &svg_elements);
+void convert(const std::string &svg_file, const std::string &png_file);
 
 class Ellipse : public SVGElement {
   public:
@@ -166,6 +166,18 @@ class Rectangle : public PolyGon {
 
     // TODO Rectangle Draw
     void draw(PNGImage &img) const override;
+};
+
+class UseElement : public SVGElement {
+  public:
+    UseElement(const std::string &id, const Transform &t, const std::string &href);
+
+    const std::string &get_href() const;
+
+    void draw(PNGImage &img) const override;
+
+  private:
+    std::string href_;
 };
 
 
