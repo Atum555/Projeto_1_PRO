@@ -89,15 +89,83 @@ class Circle : public Ellipse {
 
 class Poly : public SVGElement {
   public:
-    /// @brief      Adds a Point to the Poly
-    /// @param p    Point Object
-    void addPoint(const Point &p);
+    /// @brief          Abstract Class for a set of Points
+    /// @param id       Element's ID
+    /// @param t        Transformation
+    /// @param points   Points
+    Poly(const std::string &id, const Transform &t, const std::vector<Point> &points);
 
     // TODO Poly Draw
     void draw(PNGImage &img) const override;
 
   private:
     std::vector<Point> points_;
+};
+
+class PolyLine : public Poly {
+  public:
+    /// @brief          Polygon Element with stroke
+    /// @param id       Element's ID
+    /// @param t        Transformation
+    /// @param points   Points
+    /// @param color    Stroke Color
+    PolyLine(const std::string &id, const Transform &t, const std::vector<Point> &points, const Color &color);
+
+    // TODO PolyLine Draw
+    void draw(PNGImage &img) const override;
+
+  private:
+    Color color_;
+};
+
+class Line : public PolyLine {
+  public:
+    /// @brief          Line Element
+    /// @param id       Element's ID
+    /// @param t        Transformation
+    /// @param point1   Start Point
+    /// @param point2   End Point
+    /// @param color    Stroke Color
+    Line(const std::string &id, const Transform &t, const Point &point1, const Point &point2, const Color &color);
+
+    // TODO Line Draw
+    void draw(PNGImage &img) const override;
+
+  private:
+    Color color_;
+};
+
+class PolyGon : public Poly {
+  public:
+    /// @brief          Polygon Element with fill
+    /// @param id       Element's ID
+    /// @param t        Transformation
+    /// @param points   Points
+    /// @param color    Fill Color
+    PolyGon(const std::string &id, const Transform &t, const std::vector<Point> &points, const Color &color);
+
+    // TODO PolyGon Draw
+    void draw(PNGImage &img) const override;
+
+  private:
+    Color color_;
+};
+
+class Rectangle : public PolyGon {
+  public:
+    /// @brief          Rectangle Element
+    /// @param id       Element's ID
+    /// @param t        Transformation
+    /// @param origin   Start Point
+    /// @param width    Width
+    /// @param height   Height
+    /// @param color    Fill Color
+    Rectangle(
+        const std::string &id, const Transform &t, const Point &origin, int width, int height, const Color &color
+    );
+
+    // TODO Rectangle Draw
+    void draw(PNGImage &img) const override;
 };
 
 
