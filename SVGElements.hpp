@@ -128,7 +128,7 @@ class Line : public PolyLine {
     /// @param color    Stroke Color
     Line(const std::string &id, const Transform &t, const Point &point1, const Point &point2, const Color &color);
 
-    // TODO PolyLine Draw
+    // TODO Line Draw
     void draw(PNGImage &img) const override;
 
   private:
@@ -144,7 +144,7 @@ class PolyGon : public Poly {
     /// @param color    Fill Color
     PolyGon(const std::string &id, const Transform &t, const std::vector<Point> &points, const Color &color);
 
-    // TODO PolyLine Draw
+    // TODO PolyGon Draw
     void draw(PNGImage &img) const override;
 
   private:
@@ -163,6 +163,9 @@ class Rectangle : public PolyGon {
     Rectangle(
         const std::string &id, const Transform &t, const Point &origin, int width, int height, const Color &color
     );
+
+    // TODO Rectangle Draw
+    void draw(PNGImage &img) const override;
 };
 
 
