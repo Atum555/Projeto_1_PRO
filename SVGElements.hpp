@@ -65,8 +65,12 @@ class SVGElement {
 
 class Ellipse : public SVGElement {
   public:
-    Ellipse(const Color &fill, const Point &center, const Point &radius);
+    Ellipse(
+        std::string id, Transform t, const Color &fill, const Point &center,
+        const Point &radius
+    );
     void draw(PNGImage &img) const override;
+
 
   private:
     Color fill;
@@ -76,10 +80,11 @@ class Ellipse : public SVGElement {
 
 class Circle : public Ellipse {
   public:
-    Circle(const Color &fill, const Point &center, const int &radius);
-
-  private:
-    int radius_;
+    Circle(
+        const std::string &id, const Transform &t, const Color &fill,
+        const Point &center, const Point &radius
+    );
+    void draw(PNGImage &img) const override;
 };
 } // namespace svg
 #endif
