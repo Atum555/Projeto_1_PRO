@@ -1,6 +1,7 @@
 #include "SVGElements.hpp"
 
 namespace svg {
+
 //* BASE ELEMENT
 SVGElement::SVGElement(const std::string &id, const Transform &t) : id_(id), transform_(t) {}
 
@@ -9,17 +10,16 @@ SVGElement::~SVGElement() {}
 //* ELLIPSE
 
 Ellipse::Ellipse(const std::string &id, const Transform &t, const Color &fill, const Point &center, const Point &radius)
-    : SVGElement(id, t), fill(fill), center(center), radius(radius) {}
+    : SVGElement(id, t), fill_(fill), center_(center), radius_(radius) {}
 
-void Ellipse::draw(PNGImage &img) const { img.draw_ellipse(center, radius, fill); }
+//* CIRCLE
+
+Circle::Circle(const std::string &id, const Transform &t, const Color &fill, const Point &center, int radius)
+    : Ellipse(id, t, fill, center, Point{ radius, radius }) {}
 
 //* POLY
 
-void Ellipse::draw(PNGImage &img) const {
-    img.draw_ellipse(center, radius, fill);
-}
+void Ellipse::draw(PNGImage &img) const { img.draw_ellipse(center_, radius_, fill_); }
 
-// @todo provide the implementation of SVGElement derived classes
-// HERE -->
 
 } // namespace svg

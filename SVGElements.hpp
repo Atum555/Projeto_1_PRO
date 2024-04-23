@@ -69,14 +69,14 @@ class Ellipse : public SVGElement {
     void draw(PNGImage &img) const override;
 
   private:
-    Color fill;
-    Point center;
-    Point radius;
+    Color fill_;
+    Point center_;
+    Point radius_;
 };
 
 class Circle : public Ellipse {
   public:
-    Circle(const Color &fill, const Point &center, const int &radius);
+    Circle(const std::string &id, const Transform &t, const Color &fill, const Point &center, int radius);
 
   private:
     int radius_;
