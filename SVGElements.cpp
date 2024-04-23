@@ -1,20 +1,24 @@
 #include "SVGElements.hpp"
 
 namespace svg {
-// These must be defined!
-SVGElement::SVGElement() {}
+
+//* BASE ELEMENT
+SVGElement::SVGElement(const std::string &id, const Transform &t) : id_(id), transform_(t) {}
 
 SVGElement::~SVGElement() {}
 
-// Ellipse (initial code provided)
-Ellipse::Ellipse(const Color &fill, const Point &center, const Point &radius)
-    : fill(fill), center(center), radius(radius) {}
+//* ELLIPSE
 
-void Ellipse::draw(PNGImage &img) const {
-    img.draw_ellipse(center, radius, fill);
-}
+Ellipse::Ellipse(const std::string &id, const Transform &t, const Color &fill, const Point &center, const Point &radius)
+    : SVGElement(id, t), fill_(fill), center_(center), radius_(radius) {}
 
-// @todo provide the implementation of SVGElement derived classes
-// HERE -->
+//* CIRCLE
+
+Circle::Circle(const std::string &id, const Transform &t, const Color &fill, const Point &center, int radius)
+    : Ellipse(id, t, fill, center, Point{ radius, radius }) {}
+
+//* POLY
+
+void Poly::addPoint(const Point &p) { points_.push_back(p); }
 
 } // namespace svg
