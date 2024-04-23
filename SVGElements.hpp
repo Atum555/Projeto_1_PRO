@@ -73,5 +73,13 @@ class Ellipse : public SVGElement {
     Point center;
     Point radius;
 };
+
+class Circle : public Ellipse {
+  public:
+    Circle(const Color &fill, const Point &center, const int &radius);
+
+  private:
+    int radius_;
+};
 } // namespace svg
 #endif
