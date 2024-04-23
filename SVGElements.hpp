@@ -9,13 +9,16 @@
 
 namespace svg {
 
-void readSVG(
-    const std::string &svg_file, Point &dimensions,
-    std::vector<SVGElement *> &svg_elements
-);
+void readSVG(const std::string &svg_file, Point &dimensions, std::vector<SVGElement *> &svg_elements);
 void convert(const std::string &svg_file, const std::string &png_file);
 
 class Transform {
+  private:
+    int transX_, transY_;
+    int rotate_;
+    int scale_;
+    int origX_, origY_;
+
   public:
     /// @brief Object that represents a transformation.
     /// @param tx   Translation in X
@@ -25,8 +28,7 @@ class Transform {
     /// @param ox   Origin X
     /// @param oy   Origin Y
     Transform(int tx, int ty, int r, int s, int ox, int oy)
-        : transX_(tx), transY_(ty), rotate_(r), scale_(s), origX_(ox),
-          origY_(oy) {}
+        : transX_(tx), transY_(ty), rotate_(r), scale_(s), origX_(ox), origY_(oy) {}
 
     /// @return Translation in X
     int getTransX() const { return transX_; }
@@ -45,27 +47,25 @@ class Transform {
 
     /// @return Origin Y
     int getOriginY() const { return origY_; }
-
-  private:
-    int transX_, transY_;
-    int rotate_;
-    int scale_;
-    int origX_, origY_;
 };
 
 class SVGElement {
+  protected:
+    std::string id_;
+    Transform   transform_;
+
   public:
-    SVGElement();
+    /// @param id   Element's ID
+    /// @param t    Transformation
+    SVGElement(const std::string &id, const Transform &t);
+
     virtual ~SVGElement();
     virtual void draw(PNGImage &img) const = 0;
-
-  protected:
-    std::string id;
 };
 
 class Ellipse : public SVGElement {
   public:
-    Ellipse(const Color &fill, const Point &center, const Point &radius);
+    Ellipse(const std::string &id, const Transform &t, const Color &fill, const Point &center, const Point &radius);
     void draw(PNGImage &img) const override;
 
   private:
