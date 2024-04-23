@@ -1,7 +1,7 @@
 ## SVGElements.hpp
 
--   SVGElement (id, transform, transform-origin)
-    -   Use                                         - ????
+-   SVGElement (id, transform)
+    -   Use  (idCopy)                               - ????
 
     -   Group (vector SVGElement*)                  - VASCO
 

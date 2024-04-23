@@ -19,7 +19,6 @@ Circle::Circle(const std::string &id, const Transform &t, const Color &fill, con
 
 //* POLY
 
-void Ellipse::draw(PNGImage &img) const { img.draw_ellipse(center_, radius_, fill_); }
-
+void Poly::addPoint(const Point &p) { points_.push_back(p); }
 
 } // namespace svg

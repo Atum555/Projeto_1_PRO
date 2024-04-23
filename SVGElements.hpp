@@ -66,6 +66,8 @@ class SVGElement {
 class Ellipse : public SVGElement {
   public:
     Ellipse(const std::string &id, const Transform &t, const Color &fill, const Point &center, const Point &radius);
+
+    // TODO Ellipse Draw
     void draw(PNGImage &img) const override;
 
   private:
@@ -78,8 +80,26 @@ class Circle : public Ellipse {
   public:
     Circle(const std::string &id, const Transform &t, const Color &fill, const Point &center, int radius);
 
+    // TODO Circle Draw
+    void draw(PNGImage &img) const override;
+
   private:
     int radius_;
 };
+
+class Poly : public SVGElement {
+  public:
+    /// @brief      Adds a Point to the Poly
+    /// @param p    Point Object
+    void addPoint(const Point &p);
+
+    // TODO Poly Draw
+    void draw(PNGImage &img) const override;
+
+  private:
+    std::vector<Point> points_;
+};
+
+
 } // namespace svg
 #endif
