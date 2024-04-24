@@ -10,12 +10,12 @@ SVGElement::~SVGElement() {}
 //
 
 
-//* ELLIPSE
+//* ELLIPSE && CIRCLE
 
 Ellipse::Ellipse(
     const std::string &id, const std::vector<Transform> &t, const Color &fill, const Point &center, const Point &radius
 )
-    : SVGElement(id, t), fill_(fill), center_(center), radius_(radius) {}
+    : SVGElement(id, t), color_(fill), center_(center), radius_(radius) {}
 
 Circle::Circle(
     const std::string &id, const std::vector<Transform> &t, const Color &fill, const Point &center, int radius
@@ -25,29 +25,30 @@ Circle::Circle(
 //
 
 
-//* POLY
+//* POLYLINE && POLYGON
 
 Poly::Poly(const std::string &id, const std::vector<Transform> &t, const std::vector<Point> &points)
     : SVGElement(id, t), points_(points) {}
 
 PolyLine::PolyLine(
-    const std::string &id, const std::vector<Transform> &t, const std::vector<Point> &points, const Color &color
+    const std::string &id, const std::vector<Transform> &t, const std::vector<Point> &points, const Color &stroke
 )
-    : Poly(id, t, points), color_(color) {}
+    : Poly(id, t, points), color_(stroke) {}
 
 Line::Line(
-    const std::string &id, const std::vector<Transform> &t, const Point &point1, const Point &point2, const Color &color
+    const std::string &id, const std::vector<Transform> &t, const Point &point1, const Point &point2,
+    const Color &stroke
 )
-    : PolyLine(id, t, { point1, point2 }, color) {}
+    : PolyLine(id, t, { point1, point2 }, stroke) {}
 
 PolyGon::PolyGon(
-    const std::string &id, const std::vector<Transform> &t, const std::vector<Point> &points, const Color &color
+    const std::string &id, const std::vector<Transform> &t, const std::vector<Point> &points, const Color &fill
 )
-    : Poly(id, t, points), color_(color) {}
+    : Poly(id, t, points), color_(fill) {}
 
 Rectangle::Rectangle(
-    const std::string &id, const std::vector<Transform> &t, const Point &origin, int width, int height,
-    const Color &color
+    const std::string &id, const std::vector<Transform> &t, const Color &fill, const Point &origin, int width,
+    int height
 )
     : PolyGon(
         id, t,
@@ -56,29 +57,34 @@ Rectangle::Rectangle(
             {origin.x + width,          origin.y},
             {origin.x + width, origin.y + height},
             {        origin.x, origin.y + height},
-},
-        color
+        },
+        fill
     ) {}
 
 //
 //* Use
 
-UseElement::UseElement(const std::string &id, const std::vector<Transform> &t, const std::string &href)
-    : SVGElement(id, t), href_(href) {}
+UseElement::UseElement(const std::string &id, const std::vector<Transform> &t, SVGElement *ref)
+    : SVGElement(id, t), ref_(ref) {}
 
-const std::string &UseElement::get_href() const { return href_; }
+UseElement::~UseElement() {} // TODO UseElement Deconstructor
 
 //
 
 
 //* Group
-GroupElement::GroupElement(const std::string &id, const std::vector<Transform> &t) : SVGElement(id, t) {}
+GroupElement::GroupElement(
+    const std::string &id, const std::vector<Transform> &t, const std::vector<SVGElement *> elems
+)
+    : SVGElement(id, t), elems_(elems) {}
 
-GroupElement::~GroupElement() {}
+GroupElement::~GroupElement() {} // TODO GroupElement Deconstructor
 
 //
 
 //* Draw
+
+// TODO Implement Draws
 
 void Ellipse::draw(PNGImage &img) const {
     Point FCenter = center_; // copy of the center with transformations
@@ -118,4 +124,5 @@ void PolyGon::draw(PNGImage &img) const {
 
 void UseElement::draw(PNGImage &img) const {}
 
+void GroupElement::draw(PNGImage &img) const {}
 } // namespace svg

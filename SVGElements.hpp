@@ -75,11 +75,10 @@ class Ellipse : public SVGElement {
         const Point &radius
     );
 
-    // TODO Ellipse Draw
     void draw(PNGImage &img) const override;
 
   protected:
-    Color fill_;
+    Color color_;
     Point center_;
     Point radius_;
 };
@@ -94,7 +93,6 @@ class Circle : public Ellipse {
     /// @param radius   Circle Radius
     Circle(const std::string &id, const std::vector<Transform> &t, const Color &fill, const Point &center, int radius);
 
-    // TODO Circle Draw
     void draw(PNGImage &img) const override final;
 };
 
@@ -106,10 +104,7 @@ class Poly : public SVGElement {
     /// @param points   Points
     Poly(const std::string &id, const std::vector<Transform> &t, const std::vector<Point> &points);
 
-    // TODO Poly Draw
-    void draw(PNGImage &img) const override;
-
-  private:
+  protected:
     std::vector<Point> points_;
 };
 
@@ -118,14 +113,13 @@ class PolyLine : public Poly {
     /// @brief          Polygon Element with stroke
     /// @param id       Element's ID
     /// @param t        Transformations
-    /// @param points   Points
     /// @param color    Stroke Color
+    /// @param points   Points
     PolyLine(
-        const std::string &id, const std::vector<Transform> &t, const std::vector<Point> &points, const Color &color
+        const std::string &id, const std::vector<Transform> &t, const std::vector<Point> &points, const Color &stroke
     );
 
-    // TODO PolyLine Draw
-    void draw(PNGImage &img) const override;
+    void draw(PNGImage &img) const override final;
 
   protected:
     Color color_;
@@ -141,14 +135,8 @@ class Line : public PolyLine {
     /// @param color    Stroke Color
     Line(
         const std::string &id, const std::vector<Transform> &t, const Point &point1, const Point &point2,
-        const Color &color
+        const Color &stroke
     );
-
-    // TODO Line Draw
-    void draw(PNGImage &img) const override;
-
-  protected:
-    Color color_;
 };
 
 class PolyGon : public Poly {
@@ -159,11 +147,10 @@ class PolyGon : public Poly {
     /// @param points   Points
     /// @param color    Fill Color
     PolyGon(
-        const std::string &id, const std::vector<Transform> &t, const std::vector<Point> &points, const Color &color
+        const std::string &id, const std::vector<Transform> &t, const std::vector<Point> &points, const Color &fill
     );
 
-    // TODO PolyGon Draw
-    void draw(PNGImage &img) const override;
+    void draw(PNGImage &img) const override final;
 
   protected:
     Color color_;
@@ -179,12 +166,9 @@ class Rectangle : public PolyGon {
     /// @param height   Height
     /// @param color    Fill Color
     Rectangle(
-        const std::string &id, const std::vector<Transform> &t, const Point &origin, int width, int height,
-        const Color &color
+        const std::string &id, const std::vector<Transform> &t, const Color &fill, const Point &origin, int width,
+        int height
     );
-
-    // TODO Rectangle Draw
-    void draw(PNGImage &img) const override;
 };
 
 class UseElement : public SVGElement {
@@ -192,27 +176,29 @@ class UseElement : public SVGElement {
     /// @brief          Object that represents a reference to another element
     /// @param id       Element's ID
     /// @param t        Transformations
-    /// @param href     Reference to third Element
-    UseElement(const std::string &id, const std::vector<Transform> &t, const std::string &href);
+    /// @param ref     Reference to third Element
+    UseElement(const std::string &id, const std::vector<Transform> &t, SVGElement *ref);
+    ~UseElement();
 
-    /// @return Reference to third Element
-    const std::string &get_href() const;
-
-    // TODO Use Draw
-    void draw(PNGImage &img) const override;
+    void draw(PNGImage &img) const override final;
 
   protected:
-    std::string href_;
+    SVGElement *ref_;
 };
 
 class GroupElement : public SVGElement {
   public:
-    /// @brief Object that represents a group of elements
-    /// @param id Element's ID
-    /// @param t Transformations
-    GroupElement(const std::string &id, const std::vector<Transform> &t);
-    virtual ~GroupElement();
-    virtual void draw(PNGImage &img) const = 0;
+    /// @brief          Object that represents a group of elements
+    /// @param id       Element's ID
+    /// @param t        Transformations
+    /// @param elems    Vector of Child Elements
+    GroupElement(const std::string &id, const std::vector<Transform> &t, const std::vector<SVGElement *> elems);
+    ~GroupElement();
+
+    void draw(PNGImage &img) const override final;
+
+  protected:
+    std::vector<SVGElement *> elems_;
 };
 } // namespace svg
 #endif
