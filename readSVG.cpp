@@ -8,9 +8,10 @@ using namespace tinyxml2;
 
 namespace svg {
 void readSVG(const string &svg_file, Point &dimensions, vector<SVGElement *> &svg_elements) {
+    // Load SVG FIle
     XMLDocument doc;
     XMLError    r = doc.LoadFile(svg_file.c_str());
-    if (r != XML_SUCCESS) throw runtime_error("Unable to load " + svg_file);
+    if (r != XML_SUCCESS) throw runtime_error("Unable to load " + svg_file); // Abort if Errors
 
     // Get Dimensions
     XMLElement *xml_elem = doc.RootElement();
@@ -18,9 +19,9 @@ void readSVG(const string &svg_file, Point &dimensions, vector<SVGElement *> &sv
     dimensions.y         = xml_elem->IntAttribute("height");
 
     XMLNode *node = doc.FirstChild();                // <svg> Node
-    if (node->NoChildren()) return;
+    if (node->NoChildren()) return;                  // Check if there are any elements
 
-    XMLElement *element = node->FirstChildElement(); // First actual Node
+    XMLElement *element = node->FirstChildElement(); // First actual Element
 
     while (true) {
         const char *p;                               // Temp Variable Declaration
@@ -76,16 +77,9 @@ void readSVG(const string &svg_file, Point &dimensions, vector<SVGElement *> &sv
         elemTransform.push_back({ traTransX, traTransY, traRotate, traScale, traOriX, traOriY });
 
         // Select Element Type
-        if (elemName == "g") {
-            // TODO Implement Group Element Parser
-        }
+        if (elemName == "g") {}   // TODO Group Element Parser
 
-        if (elemName == "use") {
-            p = element->Attribute("href");
-
-            // Add Element
-            svg_elements.push_back(new UseElement(id, elemTransform, std::string(p)));
-        }
+        if (elemName == "use") {} // TODO Group Element Parser
 
         if (elemName == "ellipse") {
             p = element->Attribute("fill");

@@ -57,11 +57,13 @@ Rectangle::Rectangle(
             {origin.x + width,          origin.y},
             {origin.x + width, origin.y + height},
             {        origin.x, origin.y + height},
-        },
+},
         fill
     ) {}
 
 //
+
+
 //* Use
 
 UseElement::UseElement(const std::string &id, const std::vector<Transform> &t, SVGElement *ref)
@@ -73,6 +75,7 @@ UseElement::~UseElement() {} // TODO UseElement Deconstructor
 
 
 //* Group
+
 GroupElement::GroupElement(
     const std::string &id, const std::vector<Transform> &t, const std::vector<SVGElement *> elems
 )
@@ -82,45 +85,65 @@ GroupElement::~GroupElement() {} // TODO GroupElement Deconstructor
 
 //
 
+
 //* Draw
 
-// TODO Implement Draws
-
 void Ellipse::draw(PNGImage &img) const {
-    Point FCenter = center_; // copy of the center with transformations
+    Point center = center_; // copy of the center
+
+    // Apply each Transformation to center
     for (const Transform t : transforms_) {
-        FCenter = FCenter.translate({ t.getTransX(), t.getTransY() });
-        FCenter = FCenter.scale({ t.getOriginX(), t.getOriginY() }, t.getScale());
-        FCenter = FCenter.rotate({ t.getOriginX(), t.getOriginY() }, t.getRotate());
+        center = center.translate(t.getTrans());
+        center = center.scale(t.getOrigin(), t.getScale());
+        center = center.rotate(t.getOrigin(), t.getRotate());
     }
+    img.draw_ellipse(center, radius_, color_); // Draw Ellipse
 }
 
 void Circle::draw(PNGImage &img) const {
-    Point FCenter = center_; // copy of the center
+    Point center = center_; // copy of the center
+
+    // Apply each Transformation to center
     for (const Transform t : transforms_) {
-        FCenter = FCenter.translate({ t.getTransX(), t.getTransY() });
-        FCenter = FCenter.scale({ t.getOriginX(), t.getOriginY() }, t.getScale());
-        FCenter = FCenter.rotate({ t.getOriginX(), t.getOriginY() }, t.getRotate());
+        center = center.translate(t.getTrans());
+        center = center.scale(t.getOrigin(), t.getScale());
+        center = center.rotate(t.getOrigin(), t.getRotate());
     }
+    img.draw_ellipse(center, radius_, color_); // Draw Circle
 }
 
 void PolyLine::draw(PNGImage &img) const {
-    std::vector<Point> Fpoints = points_; // copy of the vector
+    std::vector<Point> points = points_; // Copy of the vector
+
+    // Apply each Transformation to each Point of the PolyLine
     for (const Transform t : transforms_) {
-        Fpoints = Fpoints.translate({ t.getTransX(), t.getTransY() });
-        Fpoints = Fpoints.scale({ t.getOriginX(), t.getOriginY() }, t.getScale());
-        Fpoints = Fpoints.rotate({ t.getOriginX(), t.getOriginY() }, t.getRotate());
+        for (Point &point : points) {
+            point = point.translate(t.getTrans());
+            point = point.scale(t.getOrigin(), t.getScale());
+            point = point.rotate(t.getOrigin(), t.getRotate());
+        }
     }
+
+    // Draw each individual segment
+    for (size_t i = 0; i < points.size() - 1; i++) img.draw_line(points[i], points[i + 1], color_);
 }
 
 void PolyGon::draw(PNGImage &img) const {
-    std::vector<Point> Fpoints = points_; // copy of the vector
+    std::vector<Point> points = points_; // Copy of the vector
+
+    // Apply each Transformation to each Point of the PolyGon
     for (const Transform t : transforms_) {
-        Fpoints = Fpoints.translate({ t.getTransX(), t.getTransY() });
-        Fpoints = Fpoints.scale({ t.getOriginX(), t.getOriginY() }, t.getScale());
-        Fpoints = Fpoints.rotate({ t.getOriginX(), t.getOriginY() }, t.getRotate());
+        for (Point &point : points) {
+            point = point.translate(t.getTrans());
+            point = point.scale(t.getOrigin(), t.getScale());
+            point = point.rotate(t.getOrigin(), t.getRotate());
+        }
     }
+
+    img.draw_polygon(points, color_); // Draw Polygon
 }
+
+// TODO Draws
 
 void UseElement::draw(PNGImage &img) const {}
 

@@ -27,11 +27,8 @@ class Transform {
     Transform(int tx, int ty, int r, int s, int ox, int oy)
         : transX_(tx), transY_(ty), rotate_(r), scale_(s), origX_(ox), origY_(oy) {}
 
-    /// @return Translation in X
-    int getTransX() const { return transX_; }
-
-    /// @return Translation in Y
-    int getTransY() const { return transY_; }
+    /// @return Translation
+    Point getTrans() const { return { transX_, transY_ }; }
 
     /// @return Rotation
     int getRotate() const { return rotate_; }
@@ -39,11 +36,8 @@ class Transform {
     /// @return Scale
     int getScale() const { return scale_; }
 
-    /// @return Origin X
-    int getOriginX() const { return origX_; }
-
-    /// @return Origin Y
-    int getOriginY() const { return origY_; }
+    /// @return Origin
+    Point getOrigin() const { return { origX_, origY_ }; }
 };
 
 class SVGElement {
