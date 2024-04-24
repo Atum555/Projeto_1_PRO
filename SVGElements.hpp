@@ -48,13 +48,12 @@ class Transform {
 
 class SVGElement {
   protected:
-    std::string id_;
-    Transform   transform_;
+    std::string            id_;
+    std::vector<Transform> transforms_;
 
-  public:
     /// @param id   Element's ID
-    /// @param t    Transformation
-    SVGElement(const std::string &id, const Transform &t);
+    /// @param t    Transformations
+    SVGElement(const std::string &id, const std::vector<Transform> &t);
 
     virtual ~SVGElement();
     virtual void draw(PNGImage &img) const = 0;
@@ -65,18 +64,21 @@ void convert(const std::string &svg_file, const std::string &png_file);
 
 class Ellipse : public SVGElement {
   public:
-    /// @brief          Elipse Element
+    /// @brief          Ellipse Element
     /// @param id       Element's ID
-    /// @param t        Transformation
+    /// @param t        Transformations
     /// @param fill     Fill Color
     /// @param center   Ellipse Center
     /// @param radius   Point representing the x and y radius
-    Ellipse(const std::string &id, const Transform &t, const Color &fill, const Point &center, const Point &radius);
+    Ellipse(
+        const std::string &id, const std::vector<Transform> &t, const Color &fill, const Point &center,
+        const Point &radius
+    );
 
     // TODO Ellipse Draw
     void draw(PNGImage &img) const override;
 
-  private:
+  protected:
     Color fill_;
     Point center_;
     Point radius_;
@@ -86,26 +88,23 @@ class Circle : public Ellipse {
   public:
     /// @brief          Circle Element
     /// @param id       Element's ID
-    /// @param t        Transformation
+    /// @param t        Transformations
     /// @param fill     Fill Color
     /// @param center   Circle Center
     /// @param radius   Circle Radius
-    Circle(const std::string &id, const Transform &t, const Color &fill, const Point &center, int radius);
+    Circle(const std::string &id, const std::vector<Transform> &t, const Color &fill, const Point &center, int radius);
 
     // TODO Circle Draw
-    void draw(PNGImage &img) const override;
-
-  private:
-    int radius_;
+    void draw(PNGImage &img) const override final;
 };
 
 class Poly : public SVGElement {
   public:
     /// @brief          Abstract Class for a set of Points
     /// @param id       Element's ID
-    /// @param t        Transformation
+    /// @param t        Transformations
     /// @param points   Points
-    Poly(const std::string &id, const Transform &t, const std::vector<Point> &points);
+    Poly(const std::string &id, const std::vector<Transform> &t, const std::vector<Point> &points);
 
     // TODO Poly Draw
     void draw(PNGImage &img) const override;
@@ -118,15 +117,17 @@ class PolyLine : public Poly {
   public:
     /// @brief          Polygon Element with stroke
     /// @param id       Element's ID
-    /// @param t        Transformation
+    /// @param t        Transformations
     /// @param points   Points
     /// @param color    Stroke Color
-    PolyLine(const std::string &id, const Transform &t, const std::vector<Point> &points, const Color &color);
+    PolyLine(
+        const std::string &id, const std::vector<Transform> &t, const std::vector<Point> &points, const Color &color
+    );
 
     // TODO PolyLine Draw
     void draw(PNGImage &img) const override;
 
-  private:
+  protected:
     Color color_;
 };
 
@@ -134,16 +135,19 @@ class Line : public PolyLine {
   public:
     /// @brief          Line Element
     /// @param id       Element's ID
-    /// @param t        Transformation
+    /// @param t        Transformations
     /// @param point1   Start Point
     /// @param point2   End Point
     /// @param color    Stroke Color
-    Line(const std::string &id, const Transform &t, const Point &point1, const Point &point2, const Color &color);
+    Line(
+        const std::string &id, const std::vector<Transform> &t, const Point &point1, const Point &point2,
+        const Color &color
+    );
 
     // TODO Line Draw
     void draw(PNGImage &img) const override;
 
-  private:
+  protected:
     Color color_;
 };
 
@@ -151,15 +155,17 @@ class PolyGon : public Poly {
   public:
     /// @brief          Polygon Element with fill
     /// @param id       Element's ID
-    /// @param t        Transformation
+    /// @param t        Transformations
     /// @param points   Points
     /// @param color    Fill Color
-    PolyGon(const std::string &id, const Transform &t, const std::vector<Point> &points, const Color &color);
+    PolyGon(
+        const std::string &id, const std::vector<Transform> &t, const std::vector<Point> &points, const Color &color
+    );
 
     // TODO PolyGon Draw
     void draw(PNGImage &img) const override;
 
-  private:
+  protected:
     Color color_;
 };
 
@@ -167,13 +173,14 @@ class Rectangle : public PolyGon {
   public:
     /// @brief          Rectangle Element
     /// @param id       Element's ID
-    /// @param t        Transformation
+    /// @param t        Transformations
     /// @param origin   Start Point
     /// @param width    Width
     /// @param height   Height
     /// @param color    Fill Color
     Rectangle(
-        const std::string &id, const Transform &t, const Point &origin, int width, int height, const Color &color
+        const std::string &id, const std::vector<Transform> &t, const Point &origin, int width, int height,
+        const Color &color
     );
 
     // TODO Rectangle Draw
@@ -184,9 +191,9 @@ class UseElement : public SVGElement {
   public:
     /// @brief          Object that represents a reference to another element
     /// @param id       Element's ID
-    /// @param t        Transformation
+    /// @param t        Transformations
     /// @param href     Reference to third Element
-    UseElement(const std::string &id, const Transform &t, const std::string &href);
+    UseElement(const std::string &id, const std::vector<Transform> &t, const std::string &href);
 
     /// @return Reference to third Element
     const std::string &get_href() const;
@@ -194,7 +201,7 @@ class UseElement : public SVGElement {
     // TODO Use Draw
     void draw(PNGImage &img) const override;
 
-  private:
+  protected:
     std::string href_;
 };
 
