@@ -72,7 +72,8 @@ void readSVG(const string &svg_file, Point &dimensions, vector<SVGElement *> &sv
         }
 
         // Generate Transform Object
-        const Transform elemTransform(traTransX, traTransY, traRotate, traScale, traOriX, traOriY);
+        std::vector<Transform> elemTransform;
+        elemTransform.push_back({ traTransX, traTransY, traRotate, traScale, traOriX, traOriY });
 
         // Select Element Type
         if (elemName == "g") {
