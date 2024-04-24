@@ -83,17 +83,36 @@ GroupElement::~GroupElement() {}
 
 //* Draw
 
-void Ellipse::draw(PNGImage &img) const {}
+void Ellipse::draw(PNGImage &img) const {
+    Point FCenter = center_; // copy of the center with transformations
+    for (const Transform t : transforms_) {
+        FCenter = FCenter.translate({ t.getTransX(), t.getTransY() });
+        FCenter = FCenter.scale({ t.getOriginX(), t.getOriginY() }, t.getScale());
+        FCenter = FCenter.rotate({ t.getOriginX(), t.getOriginY() }, t.getRotate());
+    }
+}
 
-void Circle::draw(PNGImage &img) const {}
-
-void Poly::draw(PNGImage &img) const {}
+void Circle::draw(PNGImage &img) const {
+    Point FCenter = center_; // copy of the center
+    for (const Transform t : transforms_) {
+        FCenter = FCenter.translate({ t.getTransX(), t.getTransY() });
+        FCenter = FCenter.scale({ t.getOriginX(), t.getOriginY() }, t.getScale());
+        FCenter = FCenter.rotate({ t.getOriginX(), t.getOriginY() }, t.getRotate());
+    }
+}
 
 void PolyLine::draw(PNGImage &img) const {}
 
 void Line::draw(PNGImage &img) const {}
 
-void PolyGon::draw(PNGImage &img) const {}
+void PolyGon::draw(PNGImage &img) const {
+    std::vector<Point> Fpoints = points_; // copy of the vector
+    for (const Transform t : transforms_) {
+        Fpoints = Fpoints.translate({ t.getTransX(), t.getTransY() });
+        Fpoints = Fpoints.scale({ t.getOriginX(), t.getOriginY() }, t.getScale());
+        Fpoints = Fpoints.rotate({ t.getOriginX(), t.getOriginY() }, t.getRotate());
+    }
+}
 
 void Rectangle::draw(PNGImage &img) const {}
 
