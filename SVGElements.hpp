@@ -41,16 +41,17 @@ class Transform {
 };
 
 class SVGElement {
-  protected:
-    std::string            id_;
-    std::vector<Transform> transforms_;
-
+  public:
     /// @param id   Element's ID
     /// @param t    Transformations
     SVGElement(const std::string &id, const std::vector<Transform> &t);
 
     virtual ~SVGElement();
     virtual void draw(PNGImage &img) const = 0;
+
+  protected:
+    std::string            id_;
+    std::vector<Transform> transforms_;
 };
 
 void readSVG(const std::string &svg_file, Point &dimensions, std::vector<SVGElement *> &svg_elements);
