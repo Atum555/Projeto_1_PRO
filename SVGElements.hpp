@@ -206,8 +206,13 @@ class UseElement : public SVGElement {
 };
 
 class GroupElement : public SVGElement {
-    // TODO Declare GroupELement Class
+  public:
+    /// @brief Object that represents a group of elements
+    /// @param id Element's ID
+    /// @param t Transformations
+    GroupElement(const std::string &id, const std::vector<Transform> &t);
+    virtual ~GroupElement();
+    virtual void draw(PNGImage &img) const = 0;
 };
-
 } // namespace svg
 #endif

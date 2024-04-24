@@ -56,7 +56,7 @@ Rectangle::Rectangle(
             {origin.x + width,          origin.y},
             {origin.x + width, origin.y + height},
             {        origin.x, origin.y + height},
-        },
+},
         color
     ) {}
 
@@ -69,6 +69,14 @@ UseElement::UseElement(const std::string &id, const std::vector<Transform> &t, c
     : SVGElement(id, t), href_(href) {}
 
 const std::string &UseElement::get_href() const { return href_; }
+
+//
+
+
+//* Group
+GroupElement::GroupElement(const std::string &id, const std::vector<Transform> &t) : SVGElement(id, t) {}
+
+GroupElement::~GroupElement() {}
 
 //
 
