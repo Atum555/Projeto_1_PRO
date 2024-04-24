@@ -61,8 +61,6 @@ Rectangle::Rectangle(
     ) {}
 
 //
-
-
 //* Use
 
 UseElement::UseElement(const std::string &id, const std::vector<Transform> &t, const std::string &href)
@@ -79,7 +77,6 @@ GroupElement::GroupElement(const std::string &id, const std::vector<Transform> &
 GroupElement::~GroupElement() {}
 
 //
-
 
 //* Draw
 
@@ -101,9 +98,14 @@ void Circle::draw(PNGImage &img) const {
     }
 }
 
-void PolyLine::draw(PNGImage &img) const {}
-
-void Line::draw(PNGImage &img) const {}
+void PolyLine::draw(PNGImage &img) const {
+    std::vector<Point> Fpoints = points_; // copy of the vector
+    for (const Transform t : transforms_) {
+        Fpoints = Fpoints.translate({ t.getTransX(), t.getTransY() });
+        Fpoints = Fpoints.scale({ t.getOriginX(), t.getOriginY() }, t.getScale());
+        Fpoints = Fpoints.rotate({ t.getOriginX(), t.getOriginY() }, t.getRotate());
+    }
+}
 
 void PolyGon::draw(PNGImage &img) const {
     std::vector<Point> Fpoints = points_; // copy of the vector
@@ -113,8 +115,6 @@ void PolyGon::draw(PNGImage &img) const {
         Fpoints = Fpoints.rotate({ t.getOriginX(), t.getOriginY() }, t.getRotate());
     }
 }
-
-void Rectangle::draw(PNGImage &img) const {}
 
 void UseElement::draw(PNGImage &img) const {}
 
