@@ -69,7 +69,7 @@ Rectangle::Rectangle(
 UseElement::UseElement(const std::string &id, const std::vector<Transform> &t, SVGElement *ref)
     : SVGElement(id, t), ref_(ref) {}
 
-UseElement::~UseElement() {} // TODO UseElement Deconstructor
+UseElement::~UseElement() { delete ref_; }
 
 //
 
@@ -81,7 +81,9 @@ GroupElement::GroupElement(
 )
     : SVGElement(id, t), elems_(elems) {}
 
-GroupElement::~GroupElement() {} // TODO GroupElement Deconstructor
+GroupElement::~GroupElement() {
+    for (SVGElement *elem : elems_) delete elem;
+}
 
 //
 
@@ -143,9 +145,10 @@ void PolyGon::draw(PNGImage &img) const {
     img.draw_polygon(points, color_); // Draw Polygon
 }
 
-// TODO Draws
+void UseElement::draw(PNGImage &img) const { ref_->draw(img); }
 
-void UseElement::draw(PNGImage &img) const {}
+void GroupElement::draw(PNGImage &img) const {
+    for (SVGElement *elem : elems_) elem->draw(img);
+}
 
-void GroupElement::draw(PNGImage &img) const {}
 } // namespace svg
