@@ -7,6 +7,13 @@ using namespace std;
 using namespace tinyxml2;
 
 namespace svg {
+
+/// @brief                  Parse an Element and add them to the vector
+/// @param element          Element Pointer
+/// @param svg_elements     Vector to add to
+/// @param transforms       Previous transformations
+void parseElement(const XMLElement *element, vector<SVGElement *> &svg_elements, const vector<Transform> &transforms) {}
+
 void readSVG(const string &svg_file, Point &dimensions, vector<SVGElement *> &svg_elements) {
     // Load SVG FIle
     XMLDocument doc;
@@ -21,9 +28,10 @@ void readSVG(const string &svg_file, Point &dimensions, vector<SVGElement *> &sv
     XMLNode *node = doc.FirstChild();                // <svg> Node
     if (node->NoChildren()) return;                  // Check if there are any elements
 
+
     XMLElement *element = node->FirstChildElement(); // First actual Element
 
-    while (true) {
+    while (true) {                                   // Loop Through Elements
         const char *p;                               // Temp Variable Declaration
 
         // Get Element Name and ID
@@ -73,8 +81,8 @@ void readSVG(const string &svg_file, Point &dimensions, vector<SVGElement *> &sv
         }
 
         // Generate Transform Object
-        std::vector<Transform> elemTransform;
-        elemTransform.push_back({ traTransX, traTransY, traRotate, traScale, traOriX, traOriY });
+        vector<Transform> transforms;
+        transforms.push_back({ traTransX, traTransY, traRotate, traScale, traOriX, traOriY });
 
         // Select Element Type
         if (elemName == "g") {}   // TODO Group Element Parser
@@ -86,7 +94,7 @@ void readSVG(const string &svg_file, Point &dimensions, vector<SVGElement *> &sv
 
             // Add Element
             svg_elements.push_back(new Ellipse(
-                id, elemTransform, parse_color(string(p)), { element->IntAttribute("cx"), element->IntAttribute("cy") },
+                id, transforms, parse_color(string(p)), { element->IntAttribute("cx"), element->IntAttribute("cy") },
                 { element->IntAttribute("rx"), element->IntAttribute("ry") }
             ));
         }
@@ -96,7 +104,7 @@ void readSVG(const string &svg_file, Point &dimensions, vector<SVGElement *> &sv
 
             // Add Element
             svg_elements.push_back(new Circle(
-                id, elemTransform, parse_color(string(p)), { element->IntAttribute("cx"), element->IntAttribute("cy") },
+                id, transforms, parse_color(string(p)), { element->IntAttribute("cx"), element->IntAttribute("cy") },
                 element->IntAttribute("r")
             ));
         }
@@ -120,7 +128,7 @@ void readSVG(const string &svg_file, Point &dimensions, vector<SVGElement *> &sv
             }
 
             // Add Element
-            svg_elements.push_back(new PolyLine(id, elemTransform, points, color));
+            svg_elements.push_back(new PolyLine(id, transforms, points, color));
         }
 
         if (elemName == "line") {
@@ -128,7 +136,7 @@ void readSVG(const string &svg_file, Point &dimensions, vector<SVGElement *> &sv
 
             // Add Element
             svg_elements.push_back(new Line(
-                id, elemTransform, { element->IntAttribute("x1"), element->IntAttribute("y1") },
+                id, transforms, { element->IntAttribute("x1"), element->IntAttribute("y1") },
                 { element->IntAttribute("x2"), element->IntAttribute("y2") }, parse_color(string(p))
             ));
         }
@@ -152,7 +160,7 @@ void readSVG(const string &svg_file, Point &dimensions, vector<SVGElement *> &sv
             }
 
             // Add Element
-            svg_elements.push_back(new PolyGon(id, elemTransform, points, color));
+            svg_elements.push_back(new PolyGon(id, transforms, points, color));
         }
 
         if (elemName == "rect") {
@@ -160,8 +168,8 @@ void readSVG(const string &svg_file, Point &dimensions, vector<SVGElement *> &sv
 
             // Add Element
             svg_elements.push_back(new Rectangle(
-                id, elemTransform, { element->IntAttribute("x"), element->IntAttribute("y") },
-                element->IntAttribute("width"), element->IntAttribute("height"), parse_color(string(p))
+                id, transforms, parse_color(string(p)), { element->IntAttribute("x"), element->IntAttribute("y") },
+                element->IntAttribute("width"), element->IntAttribute("height")
             ));
         }
 
@@ -169,4 +177,5 @@ void readSVG(const string &svg_file, Point &dimensions, vector<SVGElement *> &sv
         element = element->NextSiblingElement();
         if (element == nullptr) break; // Break if no next Node
     }
+}
 } // namespace svg
