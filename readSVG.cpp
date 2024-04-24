@@ -12,7 +12,16 @@ namespace svg {
 /// @param element          Element Pointer
 /// @param svg_elements     Vector to add to
 /// @param transforms       Previous transformations
-void parseElement(const XMLElement *element, vector<SVGElement *> &svg_elements, const vector<Transform> &transforms) {}
+void parseElement(const XMLElement *element, vector<SVGElement *> &svg_elements, const vector<Transform> &transforms) {
+    // TODO Move the parsing in readSVG to here.
+    // TODO Fix readSVG to here.
+    // TODO Make this function accept Use and Group elements the right way.
+    //?     Group elements probably become recursive.
+    // TODO Figure out a way to handle Use Elements.
+    //*     Dont't forget use elements have a pointer to a COPY of the object they refer, not the same one.
+    //!     Group and Use elements give its children transformations.
+    //*     Good Luck Guys <3 !!!
+}
 
 void readSVG(const string &svg_file, Point &dimensions, vector<SVGElement *> &svg_elements) {
     // Load SVG FIle
