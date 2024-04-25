@@ -9,9 +9,6 @@
 
 namespace svg {
 
-void readSVG(const std::string &svg_file, Point &dimensions, std::vector<SVGElement *> &svg_elements);
-void convert(const std::string &svg_file, const std::string &png_file);
-
 class Transform {
   private:
     int transX_, transY_;
@@ -30,11 +27,8 @@ class Transform {
     Transform(int tx, int ty, int r, int s, int ox, int oy)
         : transX_(tx), transY_(ty), rotate_(r), scale_(s), origX_(ox), origY_(oy) {}
 
-    /// @return Translation in X
-    int getTransX() const { return transX_; }
-
-    /// @return Translation in Y
-    int getTransY() const { return transY_; }
+    /// @return Translation
+    Point getTrans() const { return { transX_, transY_ }; }
 
     /// @return Rotation
     int getRotate() const { return rotate_; }
@@ -42,63 +36,70 @@ class Transform {
     /// @return Scale
     int getScale() const { return scale_; }
 
-    /// @return Origin X
-    int getOriginX() const { return origX_; }
-
-    /// @return Origin Y
-    int getOriginY() const { return origY_; }
+    /// @return Origin
+    Point getOrigin() const { return { origX_, origY_ }; }
 };
 
 class SVGElement {
-  protected:
-    std::string id_;
-    Transform   transform_;
-
   public:
     /// @param id   Element's ID
-    /// @param t    Transformation
-    SVGElement(const std::string &id, const Transform &t);
+    /// @param t    Transformations
+    SVGElement(const std::string &id, const std::vector<Transform> &t);
 
     virtual ~SVGElement();
     virtual void draw(PNGImage &img) const = 0;
+
+  protected:
+    std::string            id_;
+    std::vector<Transform> transforms_;
 };
+
+void readSVG(const std::string &svg_file, Point &dimensions, std::vector<SVGElement *> &svg_elements);
+void convert(const std::string &svg_file, const std::string &png_file);
 
 class Ellipse : public SVGElement {
   public:
-    Ellipse(const std::string &id, const Transform &t, const Color &fill, const Point &center, const Point &radius);
+    /// @brief          Ellipse Element
+    /// @param id       Element's ID
+    /// @param t        Transformations
+    /// @param fill     Fill Color
+    /// @param center   Ellipse Center
+    /// @param radius   Point representing the x and y radius
+    Ellipse(
+        const std::string &id, const std::vector<Transform> &t, const Color &fill, const Point &center,
+        const Point &radius
+    );
 
-    // TODO Ellipse Draw
     void draw(PNGImage &img) const override;
 
-  private:
-    Color fill_;
+  protected:
+    Color color_;
     Point center_;
     Point radius_;
 };
 
 class Circle : public Ellipse {
   public:
-    Circle(const std::string &id, const Transform &t, const Color &fill, const Point &center, int radius);
+    /// @brief          Circle Element
+    /// @param id       Element's ID
+    /// @param t        Transformations
+    /// @param fill     Fill Color
+    /// @param center   Circle Center
+    /// @param radius   Circle Radius
+    Circle(const std::string &id, const std::vector<Transform> &t, const Color &fill, const Point &center, int radius);
 
-    // TODO Circle Draw
-    void draw(PNGImage &img) const override;
-
-  private:
-    int radius_;
+    void draw(PNGImage &img) const override final;
 };
 
 class Poly : public SVGElement {
   public:
     /// @brief          Abstract Class for a set of Points
     /// @param id       Element's ID
-    /// @param t        Transformation
+    /// @param t        Transformations
     /// @param points   Points
-    Poly(const std::string &id, const Transform &t, const std::vector<Point> &points);
+    Poly(const std::string &id, const std::vector<Transform> &t, const std::vector<Point> &points);
 
-    // TODO Poly Draw
-    void draw(PNGImage &img) const override;
-
-  private:
+  protected:
     std::vector<Point> points_;
 };
 
@@ -106,15 +107,16 @@ class PolyLine : public Poly {
   public:
     /// @brief          Polygon Element with stroke
     /// @param id       Element's ID
-    /// @param t        Transformation
-    /// @param points   Points
+    /// @param t        Transformations
     /// @param color    Stroke Color
-    PolyLine(const std::string &id, const Transform &t, const std::vector<Point> &points, const Color &color);
+    /// @param points   Points
+    PolyLine(
+        const std::string &id, const std::vector<Transform> &t, const std::vector<Point> &points, const Color &stroke
+    );
 
-    // TODO PolyLine Draw
-    void draw(PNGImage &img) const override;
+    void draw(PNGImage &img) const override final;
 
-  private:
+  protected:
     Color color_;
 };
 
@@ -122,32 +124,30 @@ class Line : public PolyLine {
   public:
     /// @brief          Line Element
     /// @param id       Element's ID
-    /// @param t        Transformation
+    /// @param t        Transformations
     /// @param point1   Start Point
     /// @param point2   End Point
     /// @param color    Stroke Color
-    Line(const std::string &id, const Transform &t, const Point &point1, const Point &point2, const Color &color);
-
-    // TODO Line Draw
-    void draw(PNGImage &img) const override;
-
-  private:
-    Color color_;
+    Line(
+        const std::string &id, const std::vector<Transform> &t, const Point &point1, const Point &point2,
+        const Color &stroke
+    );
 };
 
 class PolyGon : public Poly {
   public:
     /// @brief          Polygon Element with fill
     /// @param id       Element's ID
-    /// @param t        Transformation
+    /// @param t        Transformations
     /// @param points   Points
     /// @param color    Fill Color
-    PolyGon(const std::string &id, const Transform &t, const std::vector<Point> &points, const Color &color);
+    PolyGon(
+        const std::string &id, const std::vector<Transform> &t, const std::vector<Point> &points, const Color &fill
+    );
 
-    // TODO PolyGon Draw
-    void draw(PNGImage &img) const override;
+    void draw(PNGImage &img) const override final;
 
-  private:
+  protected:
     Color color_;
 };
 
@@ -155,19 +155,45 @@ class Rectangle : public PolyGon {
   public:
     /// @brief          Rectangle Element
     /// @param id       Element's ID
-    /// @param t        Transformation
+    /// @param t        Transformations
     /// @param origin   Start Point
     /// @param width    Width
     /// @param height   Height
     /// @param color    Fill Color
     Rectangle(
-        const std::string &id, const Transform &t, const Point &origin, int width, int height, const Color &color
+        const std::string &id, const std::vector<Transform> &t, const Color &fill, const Point &origin, int width,
+        int height
     );
-
-    // TODO Rectangle Draw
-    void draw(PNGImage &img) const override;
 };
 
+class UseElement : public SVGElement {
+  public:
+    /// @brief          Object that represents a reference to another element
+    /// @param id       Element's ID
+    /// @param t        Transformations
+    /// @param ref     Reference to third Element
+    UseElement(const std::string &id, const std::vector<Transform> &t, SVGElement *ref);
+    ~UseElement();
 
+    void draw(PNGImage &img) const override final;
+
+  protected:
+    SVGElement *ref_;
+};
+
+class GroupElement : public SVGElement {
+  public:
+    /// @brief          Object that represents a group of elements
+    /// @param id       Element's ID
+    /// @param t        Transformations
+    /// @param elems    Vector of Child Elements
+    GroupElement(const std::string &id, const std::vector<Transform> &t, const std::vector<SVGElement *> elems);
+    ~GroupElement();
+
+    void draw(PNGImage &img) const override final;
+
+  protected:
+    std::vector<SVGElement *> elems_;
+};
 } // namespace svg
 #endif
