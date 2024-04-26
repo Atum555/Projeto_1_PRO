@@ -92,14 +92,17 @@ GroupElement::~GroupElement() {
 
 void Ellipse::draw(PNGImage &img) const {
     Point center = center_; // copy of the center
+    Point radius = radius_; // copy of the radius
 
     // Apply each Transformation to center
     for (const Transform t : transforms_) {
         center = center.translate(t.getTrans());
         center = center.scale(t.getOrigin(), t.getScale());
         center = center.rotate(t.getOrigin(), t.getRotate());
+        radius = radius.scale(Point{ 0, 0 }, t.getScale()); // Radius Scales Independent from the origin
     }
-    img.draw_ellipse(center, radius_, color_); // Draw Ellipse
+    
+    img.draw_ellipse(center, radius, color_);               // Draw Ellipse
 }
 
 void PolyLine::draw(PNGImage &img) const {
