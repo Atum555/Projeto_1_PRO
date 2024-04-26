@@ -87,8 +87,6 @@ class Circle : public Ellipse {
     /// @param center   Circle Center
     /// @param radius   Circle Radius
     Circle(const std::string &id, const std::vector<Transform> &t, const Color &fill, const Point &center, int radius);
-
-    void draw(PNGImage &img) const override final;
 };
 
 class Poly : public SVGElement {

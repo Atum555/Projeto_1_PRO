@@ -102,18 +102,6 @@ void Ellipse::draw(PNGImage &img) const {
     img.draw_ellipse(center, radius_, color_); // Draw Ellipse
 }
 
-void Circle::draw(PNGImage &img) const {
-    Point center = center_; // copy of the center
-
-    // Apply each Transformation to center
-    for (const Transform t : transforms_) {
-        center = center.translate(t.getTrans());
-        center = center.scale(t.getOrigin(), t.getScale());
-        center = center.rotate(t.getOrigin(), t.getRotate());
-    }
-    img.draw_ellipse(center, radius_, color_); // Draw Circle
-}
-
 void PolyLine::draw(PNGImage &img) const {
     std::vector<Point> points = points_; // Copy of the vector
 
