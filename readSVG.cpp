@@ -54,7 +54,7 @@ void readSVG(const string &svg_file, Point &dimensions, vector<SVGElement *> &sv
         int          traTransX = 0;
         int          traTransY = 0;
         int          traRotate = 0;
-        int          traScale  = 0;
+        int          traScale  = 1;
 
         // Create sStream from substring inside Parenthesis
         size_t        start = traStr.find_first_of('(') + 1;
