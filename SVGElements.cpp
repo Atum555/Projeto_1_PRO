@@ -54,9 +54,9 @@ Rectangle::Rectangle(
         id, t,
         {
             origin,
-            {origin.x + width,          origin.y},
-            {origin.x + width, origin.y + height},
-            {        origin.x, origin.y + height},
+            {origin.x + width - 1,              origin.y},
+            {origin.x + width - 1, origin.y + height - 1},
+            {            origin.x, origin.y + height - 1},
 },
         fill
     ) {}
