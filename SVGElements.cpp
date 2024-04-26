@@ -54,9 +54,9 @@ Rectangle::Rectangle(
         id, t,
         {
             origin,
-            {origin.x + width,          origin.y},
-            {origin.x + width, origin.y + height},
-            {        origin.x, origin.y + height},
+            {origin.x + width - 1,              origin.y},
+            {origin.x + width - 1, origin.y + height - 1},
+            {            origin.x, origin.y + height - 1},
 },
         fill
     ) {}
@@ -92,26 +92,17 @@ GroupElement::~GroupElement() {
 
 void Ellipse::draw(PNGImage &img) const {
     Point center = center_; // copy of the center
+    Point radius = radius_; // copy of the radius
 
     // Apply each Transformation to center
     for (const Transform t : transforms_) {
         center = center.translate(t.getTrans());
         center = center.scale(t.getOrigin(), t.getScale());
         center = center.rotate(t.getOrigin(), t.getRotate());
+        radius = radius.scale(Point{ 0, 0 }, t.getScale()); // Radius Scales Independent from the origin
     }
-    img.draw_ellipse(center, radius_, color_); // Draw Ellipse
-}
-
-void Circle::draw(PNGImage &img) const {
-    Point center = center_; // copy of the center
-
-    // Apply each Transformation to center
-    for (const Transform t : transforms_) {
-        center = center.translate(t.getTrans());
-        center = center.scale(t.getOrigin(), t.getScale());
-        center = center.rotate(t.getOrigin(), t.getRotate());
-    }
-    img.draw_ellipse(center, radius_, color_); // Draw Circle
+    
+    img.draw_ellipse(center, radius, color_);               // Draw Ellipse
 }
 
 void PolyLine::draw(PNGImage &img) const {
