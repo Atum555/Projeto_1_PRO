@@ -2,6 +2,7 @@
 #include "external/tinyxml2/tinyxml2.h"
 #include <iostream>
 #include <sstream>
+#include <string>
 
 using namespace std;
 using namespace tinyxml2;
@@ -49,12 +50,17 @@ void readSVG(const string &svg_file, Point &dimensions, vector<SVGElement *> &sv
         const string id       = p ? p : "";
 
         // Get Element Transformation
-        p                      = element->Attribute("transform");
-        const string traStr    = p ? p : "a";
-        int          traTransX = 0;
-        int          traTransY = 0;
-        int          traRotate = 0;
-        int          traScale  = 1;
+        p                = element->Attribute("transform");
+        string traStr    = p ? p : "a";
+        int    traTransX = 0;
+        int    traTransY = 0;
+        int    traRotate = 0;
+        int    traScale  = 1;
+
+        // Substitute possible ',' for ' ' (spaces)
+        for (size_t i = 0; i < traStr.size(); i++) {
+            if (traStr[i] == ',') traStr[i] = ' ';
+        }
 
         // Create sStream from substring inside Parenthesis
         size_t        start = traStr.find_first_of('(') + 1;
@@ -126,12 +132,17 @@ void readSVG(const string &svg_file, Point &dimensions, vector<SVGElement *> &sv
             // Parse Points
             vector<Point> points;
             p = element->Attribute("points");
-            istringstream issPoints(p);
-            int           x;
-            char          c;
-            int           y;
+            string pStr(p);
+
+            for (size_t i = 0; i < pStr.size(); i++) {
+                if (pStr[i] == ',') pStr[i] = ' ';
+            }
+
+            istringstream issPoints(pStr);
+
+            int  x;
+            int  y;
             while (issPoints >> x) {
-                issPoints >> c;
                 issPoints >> y;
                 points.push_back({ x, y });
             }
@@ -158,12 +169,17 @@ void readSVG(const string &svg_file, Point &dimensions, vector<SVGElement *> &sv
             // Parse Points
             vector<Point> points;
             p = element->Attribute("points");
-            istringstream issPoints(p);
-            int           x;
-            char          c;
-            int           y;
+            string pStr(p);
+
+            for (size_t i = 0; i < pStr.size(); i++) {
+                if (pStr[i] == ',') pStr[i] = ' ';
+            }
+
+            istringstream issPoints(pStr);
+
+            int x;
+            int y;
             while (issPoints >> x) {
-                issPoints >> c;
                 issPoints >> y;
                 points.push_back({ x, y });
             }
