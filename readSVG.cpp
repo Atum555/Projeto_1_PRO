@@ -83,11 +83,12 @@ void parseElement(
     const Transform   trans = getTransform(element); // Get Element Transformation
     vector<Transform> transList;                     // Generate List of Transformations
 
+    transList.push_back(trans); // Add Element Transformation
+    
     transList.insert(
-        transList.begin(), inheritedTransforms.begin(), inheritedTransforms.end()
+        transList.end(), inheritedTransforms.begin(), inheritedTransforms.end()
     );                          // Append Inherited Transformations
 
-    transList.push_back(trans); // Add Element Transformation
 
 
     // Select Element Type
