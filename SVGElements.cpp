@@ -9,6 +9,8 @@ SVGElement::SVGElement(const std::string &id, const std::vector<Transform> &t) :
 
 SVGElement::~SVGElement() {}
 
+std::string SVGElement::getID() const { return id_; }
+
 //
 
 
