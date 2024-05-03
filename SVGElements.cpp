@@ -1,4 +1,5 @@
 #include "SVGElements.hpp"
+#include <bits/stdc++.h>
 
 namespace svg {
 
@@ -6,6 +7,8 @@ namespace svg {
 SVGElement::SVGElement(const std::string &id, const std::vector<Transform> &t) : id_(id), transforms_(t) {}
 
 SVGElement::~SVGElement() {}
+
+std::string SVGElement::get_id() const { return id_; }
 
 //
 
@@ -27,13 +30,10 @@ Circle::Circle(
 
 //* POLYLINE && POLYGON
 
-Poly::Poly(const std::string &id, const std::vector<Transform> &t, const std::vector<Point> &points)
-    : SVGElement(id, t), points_(points) {}
-
 PolyLine::PolyLine(
     const std::string &id, const std::vector<Transform> &t, const std::vector<Point> &points, const Color &stroke
 )
-    : Poly(id, t, points), color_(stroke) {}
+    : SVGElement(id, t), color_(stroke), points_(points) {}
 
 Line::Line(
     const std::string &id, const std::vector<Transform> &t, const Point &point1, const Point &point2,
@@ -44,22 +44,22 @@ Line::Line(
 PolyGon::PolyGon(
     const std::string &id, const std::vector<Transform> &t, const std::vector<Point> &points, const Color &fill
 )
-    : Poly(id, t, points), color_(fill) {}
+    : SVGElement(id, t), color_(fill), points_(points) {}
 
 Rectangle::Rectangle(
     const std::string &id, const std::vector<Transform> &t, const Color &fill, const Point &origin, int width,
     int height
 )
     : PolyGon(
-        id, t,
-        {
-            origin,
-            {origin.x + width - 1,              origin.y},
-            {origin.x + width - 1, origin.y + height - 1},
-            {            origin.x, origin.y + height - 1},
+          id, t,
+          {
+              origin,
+              { origin.x + width - 1,              origin.y },
+              { origin.x + width - 1, origin.y + height - 1 },
+              {             origin.x, origin.y + height - 1 },
 },
-        fill
-    ) {}
+          fill
+      ) {}
 
 //
 
@@ -88,6 +88,43 @@ GroupElement::~GroupElement() {
 //
 
 
+//* Copy
+
+SVGElement *Ellipse::copy(const std::vector<Transform> &t) const {
+    std::vector<Transform> transList = { transforms_[0] };
+    transList.insert(transList.end(), t.begin(), t.end());
+    return new Ellipse("", transList, color_, center_, radius_);
+}
+
+SVGElement *PolyLine::copy(const std::vector<Transform> &t) const {
+    std::vector<Transform> transList = { transforms_[0] };
+    transList.insert(transList.end(), t.begin(), t.end());
+    return new PolyLine("", transList, points_, color_);
+}
+
+SVGElement *PolyGon::copy(const std::vector<Transform> &t) const {
+    std::vector<Transform> transList = { transforms_[0] };
+    transList.insert(transList.end(), t.begin(), t.end());
+    return new PolyGon("", transList, points_, color_);
+}
+
+SVGElement *GroupElement::copy(const std::vector<Transform> &t) const {
+    std::vector<Transform>    transList = { transforms_[0] };
+    std::vector<SVGElement *> newChildren;
+    transList.insert(transList.end(), t.begin(), t.end());
+    for (SVGElement *element : elems_) newChildren.push_back(element->copy(transList));
+    return new GroupElement("", transList, newChildren);
+}
+
+SVGElement *UseElement::copy(const std::vector<Transform> &t) const {
+    std::vector<Transform> transList = { transforms_[0] };
+    transList.insert(transList.end(), t.begin(), t.end());
+    return new UseElement("", transList, ref_->copy(transList));
+}
+
+//
+
+
 //* Draw
 
 void Ellipse::draw(PNGImage &img) const {
@@ -101,7 +138,7 @@ void Ellipse::draw(PNGImage &img) const {
         center = center.rotate(t.getOrigin(), t.getRotate());
         radius = radius.scale(Point{ 0, 0 }, t.getScale()); // Radius Scales Independent from the origin
     }
-    
+
     img.draw_ellipse(center, radius, color_);               // Draw Ellipse
 }
 
