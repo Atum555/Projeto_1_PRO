@@ -1,8 +1,6 @@
 #include "SVGElements.hpp"
 #include "external/tinyxml2/tinyxml2.h"
-#include <iostream>
-#include <sstream>
-#include <string>
+#include <bits/stdc++.h>
 
 using namespace std;
 using namespace tinyxml2;
@@ -71,7 +69,8 @@ Transform getTransform(const XMLElement *element) {
 /// @param svg_elements     Vector to add to
 /// @param transforms       Previous transformations
 void parseElement(
-    const XMLElement *element, vector<SVGElement *> &svg_elements, const vector<Transform> &inheritedTransforms = {}
+    const XMLElement *element, vector<SVGElement *> &svg_elements, vector<SVGElement *> &id_elements,
+    const vector<Transform> &inheritedTransforms = {}
 ) {
     const char *p;                                   // Temp Variable Declaration
 
@@ -83,13 +82,13 @@ void parseElement(
     const Transform   trans = getTransform(element); // Get Element Transformation
     vector<Transform> transList;                     // Generate List of Transformations
 
-    transList.push_back(trans); // Add Element Transformation
-    
+    transList.push_back(trans);                      // Add Element Transformation
+
     transList.insert(
         transList.end(), inheritedTransforms.begin(), inheritedTransforms.end()
-    );                          // Append Inherited Transformations
+    ); // Append Inherited Transformations
 
-
+    SVGElement *eP = nullptr;
 
     // Select Element Type
     if (elemName == "g") {
@@ -99,37 +98,47 @@ void parseElement(
         // Loop Through Children
         while (true) {
             // Parse Element
-            parseElement(child, children, transList);
+            parseElement(child, children, id_elements, transList);
 
             // Get Next Element
             child = child->NextSiblingElement();
             if (child == nullptr) break; // Break if no more elements
         }
-        
+
         // Add Element
-        svg_elements.push_back(new GroupElement(id, transList, children));
+        eP = new GroupElement(id, transList, children);
     }
 
-    if (elemName == "use") {} // TODO Group Element Parser
+    if (elemName == "use") {
+        p = element->Attribute("href"); // Get Element HREF
+        string href(p + 1);
+
+        SVGElement* ref = nullptr;
+
+        for(SVGElement* v : id_elements) {
+            if(href == v->get_id()) {
+                ref = v->copy(transList);
+            }
+        }
+        eP = new UseElement(id, transList, ref);
+    }
 
     if (elemName == "ellipse") {
-        p = element->Attribute("fill");
-
-        // Add Element
-        svg_elements.push_back(new Ellipse(
+        p  = element->Attribute("fill");
+        eP = new Ellipse(
             id, transList, parse_color(string(p)), { element->IntAttribute("cx"), element->IntAttribute("cy") },
             { element->IntAttribute("rx"), element->IntAttribute("ry") }
-        ));
+        );
     }
 
     if (elemName == "circle") {
         p = element->Attribute("fill");
 
         // Add Element
-        svg_elements.push_back(new Circle(
+        eP = new Circle(
             id, transList, parse_color(string(p)), { element->IntAttribute("cx"), element->IntAttribute("cy") },
             element->IntAttribute("r")
-        ));
+        );
     }
 
     if (elemName == "polyline") {
@@ -156,17 +165,17 @@ void parseElement(
         }
 
         // Add Element
-        svg_elements.push_back(new PolyLine(id, transList, points, color));
+        eP = new PolyLine(id, transList, points, color);
     }
 
     if (elemName == "line") {
         p = element->Attribute("stroke");
 
         // Add Element
-        svg_elements.push_back(new Line(
+        eP = new Line(
             id, transList, { element->IntAttribute("x1"), element->IntAttribute("y1") },
             { element->IntAttribute("x2"), element->IntAttribute("y2") }, parse_color(string(p))
-        ));
+        );
     }
 
     if (elemName == "polygon") {
@@ -193,17 +202,24 @@ void parseElement(
         }
 
         // Add Element
-        svg_elements.push_back(new PolyGon(id, transList, points, color));
+        eP = new PolyGon(id, transList, points, color);
     }
 
     if (elemName == "rect") {
         p = element->Attribute("fill");
 
         // Add Element
-        svg_elements.push_back(new Rectangle(
+        eP = new Rectangle(
             id, transList, parse_color(string(p)), { element->IntAttribute("x"), element->IntAttribute("y") },
             element->IntAttribute("width"), element->IntAttribute("height")
-        ));
+        );
+    }
+
+
+    // Add Element
+    if (eP) {
+        svg_elements.push_back(eP);
+        if (id.size()) id_elements.push_back(eP);
     }
 }
 
@@ -223,10 +239,11 @@ void readSVG(const string &svg_file, Point &dimensions, vector<SVGElement *> &sv
 
     XMLElement *element = node->FirstChildElement(); // First actual Element
 
+   vector<SVGElement*> id_elements;
     // Loop Through Elements
     while (true) {
         // Parse Element
-        parseElement(element, svg_elements);
+        parseElement(element, svg_elements, id_elements);
 
         // Get Next Element
         element = element->NextSiblingElement();

@@ -5,7 +5,7 @@
 #include "Color.hpp"
 #include "PNGImage.hpp"
 #include "Point.hpp"
-#include "string"
+#include <bits/stdc++.h>
 
 namespace svg {
 
@@ -45,9 +45,11 @@ class SVGElement {
     /// @param id   Element's ID
     /// @param t    Transformations
     SVGElement(const std::string &id, const std::vector<Transform> &t);
+    std::string get_id() const;
 
     virtual ~SVGElement();
-    virtual void draw(PNGImage &img) const = 0;
+    virtual void        draw(PNGImage &img) const                   = 0;
+    virtual SVGElement *copy(const std::vector<Transform> &t) const = 0;
 
   protected:
     std::string            id_;
@@ -69,6 +71,7 @@ class Ellipse : public SVGElement {
         const std::string &id, const std::vector<Transform> &t, const Color &fill, const Point &center,
         const Point &radius
     );
+    SVGElement *copy(const std::vector<Transform> &t) const override final;
 
     void draw(PNGImage &img) const override;
 
@@ -89,19 +92,7 @@ class Circle : public Ellipse {
     Circle(const std::string &id, const std::vector<Transform> &t, const Color &fill, const Point &center, int radius);
 };
 
-class Poly : public SVGElement {
-  public:
-    /// @brief          Abstract Class for a set of Points
-    /// @param id       Element's ID
-    /// @param t        Transformations
-    /// @param points   Points
-    Poly(const std::string &id, const std::vector<Transform> &t, const std::vector<Point> &points);
-
-  protected:
-    std::vector<Point> points_;
-};
-
-class PolyLine : public Poly {
+class PolyLine : public SVGElement {
   public:
     /// @brief          Polygon Element with stroke
     /// @param id       Element's ID
@@ -112,10 +103,12 @@ class PolyLine : public Poly {
         const std::string &id, const std::vector<Transform> &t, const std::vector<Point> &points, const Color &stroke
     );
 
-    void draw(PNGImage &img) const override final;
+    void        draw(PNGImage &img) const override final;
+    SVGElement *copy(const std::vector<Transform> &t) const override final;
 
   protected:
-    Color color_;
+    Color              color_;
+    std::vector<Point> points_;
 };
 
 class Line : public PolyLine {
@@ -132,7 +125,7 @@ class Line : public PolyLine {
     );
 };
 
-class PolyGon : public Poly {
+class PolyGon : public SVGElement {
   public:
     /// @brief          Polygon Element with fill
     /// @param id       Element's ID
@@ -143,10 +136,12 @@ class PolyGon : public Poly {
         const std::string &id, const std::vector<Transform> &t, const std::vector<Point> &points, const Color &fill
     );
 
-    void draw(PNGImage &img) const override final;
+    void        draw(PNGImage &img) const override final;
+    SVGElement *copy(const std::vector<Transform> &t) const override final;
 
   protected:
-    Color color_;
+    Color              color_;
+    std::vector<Point> points_;
 };
 
 class Rectangle : public PolyGon {
@@ -164,21 +159,6 @@ class Rectangle : public PolyGon {
     );
 };
 
-class UseElement : public SVGElement {
-  public:
-    /// @brief          Object that represents a reference to another element
-    /// @param id       Element's ID
-    /// @param t        Transformations
-    /// @param ref     Reference to third Element
-    UseElement(const std::string &id, const std::vector<Transform> &t, SVGElement *ref);
-    ~UseElement();
-
-    void draw(PNGImage &img) const override final;
-
-  protected:
-    SVGElement *ref_;
-};
-
 class GroupElement : public SVGElement {
   public:
     /// @brief          Object that represents a group of elements
@@ -188,10 +168,27 @@ class GroupElement : public SVGElement {
     GroupElement(const std::string &id, const std::vector<Transform> &t, const std::vector<SVGElement *> elems);
     ~GroupElement();
 
-    void draw(PNGImage &img) const override final;
+    void        draw(PNGImage &img) const override final;
+    SVGElement *copy(const std::vector<Transform> &t) const override final;
 
   protected:
     std::vector<SVGElement *> elems_;
+};
+
+class UseElement : public SVGElement {
+  public:
+    /// @brief          Object that represents a reference to another element
+    /// @param id       Element's ID
+    /// @param t        Transformations
+    /// @param ref     Reference to third Element
+    UseElement(const std::string &id, const std::vector<Transform> &t, SVGElement *ref);
+    ~UseElement();
+
+    void        draw(PNGImage &img) const override final;
+    SVGElement *copy(const std::vector<Transform> &t) const override final;
+
+  protected:
+    SVGElement *ref_;
 };
 } // namespace svg
 #endif
