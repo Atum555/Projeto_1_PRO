@@ -59,7 +59,7 @@ void parseElement(
 
 
     // Create Element Pointer
-    SVGElement *eP = 0;
+    SVGElement *eP = nullptr;
 
     // Parse Each Element Differently
 

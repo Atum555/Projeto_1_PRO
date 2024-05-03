@@ -54,7 +54,7 @@ class SVGElement {
 
     /// @brief  Get the ID of the element
     /// @return Element's ID
-    std::string getID() const { return id_; }
+    std::string getID() const;
 
     /// @brief      Draw Element
     /// @param img  PNGImage object of the image
@@ -62,7 +62,7 @@ class SVGElement {
 
     /// @brief      Generate a copy of the element
     /// @param t    Extra Transformations to add
-    /// @return     Pointer to newly create element
+    /// @return     Pointer to newly created element
     virtual SVGElement *copy(const std::vector<Transform> &t) const = 0;
 };
 
@@ -166,22 +166,6 @@ class Rectangle : public PolyGon {
     );
 };
 
-class UseElement : public SVGElement {
-  protected:
-    const SVGElement *ref_;
-
-  public:
-    /// @brief          Object with a reference to another element
-    /// @param id       Element's ID
-    /// @param t        Transformations
-    /// @param ref      Pointer to third Element
-    UseElement(const std::string &id, const std::vector<Transform> &t, const SVGElement *ref);
-    ~UseElement();
-
-    void        draw(PNGImage &img) const override final;
-    SVGElement *copy(const std::vector<Transform> &t) const override final;
-};
-
 class GroupElement : public SVGElement {
   protected:
     std::vector<SVGElement *> elems_;
@@ -193,6 +177,22 @@ class GroupElement : public SVGElement {
     /// @param elems    Vector of Child Elements
     GroupElement(const std::string &id, const std::vector<Transform> &t, const std::vector<SVGElement *> &elems);
     ~GroupElement();
+
+    void        draw(PNGImage &img) const override final;
+    SVGElement *copy(const std::vector<Transform> &t) const override final;
+};
+
+class UseElement : public SVGElement {
+  protected:
+    const SVGElement *ref_;
+
+  public:
+    /// @brief          Object with a reference to another element
+    /// @param id       Element's ID
+    /// @param t        Transformations
+    /// @param ref      Pointer to third Element
+    UseElement(const std::string &id, const std::vector<Transform> &t, const SVGElement *ref);
+    ~UseElement();
 
     void        draw(PNGImage &img) const override final;
     SVGElement *copy(const std::vector<Transform> &t) const override final;
