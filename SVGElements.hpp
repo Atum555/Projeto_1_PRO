@@ -6,7 +6,6 @@
 #include "PNGImage.hpp"
 #include "Point.hpp"
 #include "external/tinyxml2/tinyxml2.h"
-#include <bits/stdc++.h>
 
 namespace svg {
 
@@ -108,8 +107,8 @@ class PolyLine : public SVGElement {
     /// @brief          PolyLine Element
     /// @param id       Element's ID
     /// @param t        Transformations
-    /// @param color    Stroke Color
     /// @param points   Points
+    /// @param stroke   Stroke Color
     PolyLine(
         const std::string &id, const std::vector<Transform> &t, const std::vector<Point> &points, const Color &stroke
     );

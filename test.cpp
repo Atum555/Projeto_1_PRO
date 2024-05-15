@@ -69,7 +69,7 @@ class TestDriver {
     }
 
     void onTestCompletion(bool success) {
-        cout << (success ? "pass" : "fail") << std::endl;
+        cout << (success ? "\u001b[32mpass\u001b[0m" : "\u001b[31mfail\u001b[0m") << std::endl;
         if (success) {
             passed_tests++;
         } else {
