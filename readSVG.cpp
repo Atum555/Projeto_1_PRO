@@ -1,6 +1,8 @@
 #include "SVGElements.hpp"
 #include "external/tinyxml2/tinyxml2.h"
-#include <bits/stdc++.h>
+#include <sstream>
+#include <string>
+#include <vector>
 
 using namespace std;
 using namespace tinyxml2;
@@ -220,9 +222,8 @@ Transform getTransform(const XMLElement *element) {
         if (*itr == ',') *itr = ' ';
 
     // Create sStream from substring inside Parenthesis
-    size_t start = traStr.find_first_of('(') + 1; // Will become Zero if not found
-    size_t end   = traStr.find_first_of(')');
-    cout << start << ',' << end << endl;
+    size_t        start = traStr.find_first_of('(') + 1; // Will become Zero if not found
+    size_t        end   = traStr.find_first_of(')');
     istringstream traStream(start ? traStr.substr(start, end - start) : "");
 
     // Parse Values According to Type of Transformation

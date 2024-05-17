@@ -6,6 +6,8 @@
 #include "PNGImage.hpp"
 #include "Point.hpp"
 #include "external/tinyxml2/tinyxml2.h"
+#include <string>
+#include <vector>
 
 namespace svg {
 
@@ -17,7 +19,7 @@ class Transform {
     int origX_, origY_;
 
   public:
-    /// @brief Object that represents a transformation.
+    /// @brief      Object that represents a transformation.
     /// @param tx   Translation in X
     /// @param ty   Translation in Y
     /// @param r    Rotation
