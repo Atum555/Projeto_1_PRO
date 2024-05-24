@@ -2,11 +2,11 @@
 
 ## Group elements
 
-Identify all group elements (numbers and names).
-
 -   up202307150 Ana Francisca Fontes Pacheco
 -   up202306618 Cláudio Daniel Ferreira Meireles
 -   up202307797 Vasco Vaz Vieira
+
+
 
 ## Accomplished tasks
 
@@ -14,6 +14,7 @@ Identify all group elements (numbers and names).
 
 A nossa hierarquia é da forma:
 
+```
                          SVGElement
                              |
     ____________________________________________________________
@@ -22,7 +23,7 @@ A nossa hierarquia é da forma:
     |          |             |
  Circle      Line        Rectangle
 
-
+```
 -   SVGElement
 Esta classe é a class base dos elementos.
 Contem um ID e um vetor de transformações que estão associadas
@@ -90,6 +91,6 @@ ou seja, que herda. Após isso adiciona-o à lista que recebeu. Caso
 o elemento possuia um ID adiciona-o também à lista global que contem todos
 os elementos com ID.
 
-Temos ainda uma função transform que gera um objeto Transform apartir de
-um objeto XMLElement. Estas são apenas aplicas na hora do desenho, sem
+Temos ainda uma função transform que gera um objeto Transform a partir de
+um objeto XMLElement. Estas são apenas aplicadas na hora do desenho, sem
 nunca alterar os elementos em si.
